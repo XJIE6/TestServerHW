@@ -1,0 +1,5 @@
+package ru.spbau.mit.testserver;
+
+message Array {
+    repeated int32 value = 1;
+}
