@@ -14,6 +14,7 @@ public class TCPServer4 extends TCPServer {
                 new Thread(() -> {
                     try {
                         handle(socket);
+                        socket.close();
                     } catch (IOException e) {
                     }
                 }).start();
