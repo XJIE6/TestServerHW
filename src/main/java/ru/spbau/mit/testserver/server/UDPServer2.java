@@ -10,11 +10,11 @@ import java.util.concurrent.Executors;
 public class UDPServer2 extends UDPServer{
     private ExecutorService threadPool;
     private final static int THREAD_COUNT = 4;
-    UDPServer2() throws IOException {
+    public UDPServer2() throws IOException {
         super();
         threadPool = Executors.newFixedThreadPool(THREAD_COUNT);
     }
-    void start() {
+    public void start() {
         while (!socket.isClosed()) {
             try {
                 message = new byte[ProtocolUtils.MESSAGE_SIZE];
@@ -22,7 +22,9 @@ public class UDPServer2 extends UDPServer{
                 socket.receive(packet);
                 threadPool.execute(() -> handle(packet));
             } catch (IOException e) {
+                //socket closed
             }
         }
+        threadPool.shutdown();
     }
 }

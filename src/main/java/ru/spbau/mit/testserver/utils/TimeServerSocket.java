@@ -6,9 +6,6 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class TimeServerSocket extends ServerSocket{
-    public TimeServerSocket() throws IOException {
-        super();
-    }
     public TimeServerSocket(int port) throws IOException {
         super(port);
     }

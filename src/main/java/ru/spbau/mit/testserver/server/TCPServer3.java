@@ -37,11 +37,11 @@ public class TCPServer3 extends Server {
     }
 
     @Override
-    int getPort() {
+    public int getPort() {
         return PORT;
     }
 
-    void close() {
+    public void close() {
         try {
             serverSocket.close();
         } catch (IOException e) {
@@ -49,7 +49,7 @@ public class TCPServer3 extends Server {
     }
 
     @Override
-    void start() {
+    public void start() {
         try {
             while (serverSocket.isOpen()) {
                 selector.select();
@@ -107,15 +107,15 @@ public class TCPServer3 extends Server {
     }
 
     private void requestHandler(final Info info) {
-        try {
-            info.put = ByteBuffer.wrap(ProtocolUtils.listToByte(ArraySorter.sort(ProtocolUtils.byteTolist(info.get.array()))));
+        /*try {
+            info.put = ByteBuffer.wrap(ProtocolUtils.listToByte(ArraySorter.sort(ProtocolUtils.byteToList(info.get.array()))));
         } catch (InvalidProtocolBufferException e) {
-        }
+        }*/
     }
 
     private static class Info {
         private ByteBuffer size = ByteBuffer.allocate(4);
-        private ByteBuffer get;
-        private ByteBuffer put;
+        private ByteBuffer get = null;
+        private ByteBuffer put = null;
     }
 }

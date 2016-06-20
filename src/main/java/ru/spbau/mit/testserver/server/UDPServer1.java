@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 
 public class UDPServer1 extends UDPServer{
-    UDPServer1() throws IOException {
+    public UDPServer1() throws IOException {
         super();
     }
-    void start() {
+    public void start() {
         while (!socket.isClosed()) {
             try {
                 message = new byte[ProtocolUtils.MESSAGE_SIZE];
@@ -17,6 +17,7 @@ public class UDPServer1 extends UDPServer{
                 socket.receive(packet);
                 new Thread(() -> handle(packet)).start();
             } catch (IOException e) {
+                //socket closed
             }
         }
     }

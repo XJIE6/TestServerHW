@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import static ru.spbau.mit.testserver.utils.ProtocolUtils.*;
 
 public class MainClient {
-    private static final int PORT = 12345;
+
     private Socket socket;
     private String ip;
     private static Client getClient(int cmd, int elementNumber, int requestNumber, long delay) {
@@ -42,55 +43,59 @@ public class MainClient {
     MainClient(String ip) throws IOException {
         socket = new Socket();
         this.ip = ip;
-        socket.connect(new InetSocketAddress(ip, PORT));
+        socket.connect(new InetSocketAddress(ip, ProtocolUtils.SERVER_PORT));
     }
 
     double[] runServer(int cmd, int clientNumber, int elementNumber, int requestNumber, long delay) {
         TimeCounter.resetTime();
-        int port = 11111;
+        DataInputStream in;
+        DataOutputStream out;
+        int port;
         try {
-            socket.getOutputStream().write(cmd);
-            socket.getOutputStream().flush();
-            //port = socket.getInputStream().read();
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
+            out.writeInt(cmd);
+            port = in.readInt();
         } catch (IOException e) {
             return null;
         }
-        System.out.print(port);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
         System.out.print(port);
-        ExecutorService threadPool = Executors.newFixedThreadPool(4);
+        //ExecutorService threadPool = Executors.newFixedThreadPool(4);
+        ArrayList<Thread> threads = new ArrayList<>();
         for (int i = 0; i < clientNumber; i++) {
-            threadPool.execute(() -> {
-                System.out.println("executed");
-                getClient(cmd, elementNumber, requestNumber, delay).start(ip, port);
-                }
-            );
-        }
-        threadPool.shutdown();
-
-        System.out.println("shutted");
-        try {
-            threadPool.awaitTermination(1, TimeUnit.HOURS);
-        } catch (InterruptedException e) {
+            Thread thread = new Thread(() -> getClient(cmd, elementNumber, requestNumber, delay).start(ip, port));
+            threads.add(thread);
+            thread.start();
         }
 
-        System.out.println("awaited");
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                //fail
+                //witing for next thread
+            }
+        }
+
+        //System.out.println("awaited");
         try {
-            socket.getOutputStream().write(cmd);
-            socket.getOutputStream().flush();
+            out.writeInt(cmd);
         } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
         double[] res = new double[3];
         res[0] = ProtocolUtils.averageFromList(TimeCounter.getTimes());
         try {
-            res[1] = new DataInputStream(socket.getInputStream()).readDouble();
-            res[2] = new DataInputStream(socket.getInputStream()).readDouble();
+            res[1] = in.readDouble();
+            res[2] = in.readDouble();
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         return res;
     }

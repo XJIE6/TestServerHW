@@ -57,7 +57,6 @@ public class Graphic extends JPanel {
         times[1].add((int) (requestTime));
         times[2].add((int) (serverTime));
         times[3].add(value);
-        System.out.print("added");
         updateTimes();
     }
 
@@ -65,8 +64,6 @@ public class Graphic extends JPanel {
         for (int i = 0; i < TIME_COUNT - 1; i++) {
             graphic.updateSeries(names[i], times[TIME_COUNT - 1], times[i], null);
         }
-
-        System.out.print("updated");
     }
 
 }
