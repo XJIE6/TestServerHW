@@ -4,22 +4,28 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class TCPServer4 extends TCPServer {
-    TCPServer4() throws IOException {
+    public TCPServer4() throws IOException {
         super();
     }
-    void start() {
+    public void start() {
         while (!serverSocket.isClosed()) {
+            Socket socket;
             try {
-                Socket socket = serverSocket.accept();
-                new Thread(() -> {
-                    try {
-                        handle(socket);
-                        socket.close();
-                    } catch (IOException e) {
-                    }
-                }).start();
+                socket = serverSocket.accept();
             } catch (IOException e) {
+                continue;
+                //fail
+                //wait for next client
             }
+            new Thread(() -> {
+                try {
+                    handle(socket);
+                    socket.close();
+                } catch (IOException e) {
+                    //fail
+                    //wait for next client
+                }
+            }).start();
         }
     }
 }

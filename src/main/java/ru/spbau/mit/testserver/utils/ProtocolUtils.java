@@ -1,17 +1,22 @@
 package ru.spbau.mit.testserver.utils;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import ru.spbau.mit.testserver.Protocol;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.net.DatagramPacket;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 
 public class ProtocolUtils {
-    public static final int MESSAGE_SIZE = 1 << 20;
+    public static final int MESSAGE_SIZE = 1 << 21;
     public static final int RUN_TCP_1 = 0;
     public static final int RUN_TCP_2 = 1;
     public static final int RUN_TCP_3 = 2;
@@ -19,33 +24,43 @@ public class ProtocolUtils {
     public static final int RUN_UDP_1 = 4;
     public static final int RUN_UDP_2 = 5;
     public static final int EXIT = 6;
+    public static final int SERVER_PORT = 12345;
+    public static final int MAX_TIME_WAIT = 5000;
+    public static final int WAIT_CONNECTION_TIME = 500;
 
-    public static byte[] listToByte (List <Integer> list) {
-        //return Protocol.Array.newBuilder().addAllValue(list).build().toByteArray();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        list.stream().forEach(baos::write);
-        return baos.toByteArray();
-    }
-    public static List<Integer> byteTolist (byte[] bytes) throws InvalidProtocolBufferException {
-        //return Protocol.Array.parseFrom(bytes).getValueList();
-        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        List<Integer> list = new ArrayList<>();
-        while (bais.available() > 0) {
-            list.add(bais.read());
+    public static List<Integer> randomList(int elementNumber) {
+        Random random = new Random();
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < elementNumber; i++) {
+            res.add(random.nextInt());
         }
-        return list;
+        return res;
     }
-    public static DatagramPacket byteToPacket (byte[] bytes) {
-        bytes = ByteBuffer.allocate(bytes.length + Integer.SIZE / Byte.SIZE).putInt(bytes.length).put(bytes).array();
-        return new DatagramPacket(bytes, bytes.length);
-    }
-    public static byte[] packetToByte(DatagramPacket packet) {
-        ByteBuffer buff = ByteBuffer.wrap(packet.getData());
-        byte[] bytes = new byte[buff.getInt()];
-        buff.get(bytes);
-        return bytes;
-    }
+
     public static double averageFromList (List<Long> list) {
-        return list.stream().mapToLong(Long::longValue).average().orElse(-1);
+        return list.stream().mapToLong(Long::longValue).filter(i -> i < MAX_TIME_WAIT).average().orElse(0);
     }
+
+    public static byte[] listToBytes (List <Integer> list) {
+        byte[] message = Protocol.Array.newBuilder().addAllValue(list).build().toByteArray();
+        ByteBuffer bb = ByteBuffer.allocate(message.length + Integer.SIZE / Byte.SIZE);
+        bb.putInt(message.length);
+        bb.put(message);
+        return bb.array();
+    }
+    public static List<Integer> bytesToList (byte[] bytes) throws InvalidProtocolBufferException {
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        int size = bb.getInt();
+        if (size <= 0) {
+            return new ArrayList<>();
+        }
+        return bytesToListWithSize(bb, size);
+    }
+
+    public static List<Integer> bytesToListWithSize (ByteBuffer bb, int size) throws InvalidProtocolBufferException {
+        byte[] message = new byte[size];
+        bb.get(message);
+        return new ArrayList<>(Protocol.Array.parseFrom(message).getValueList());
+    }
+
 }

@@ -1,44 +1,52 @@
 package ru.spbau.mit.testserver.client;
 
+
 import ru.spbau.mit.testserver.utils.ProtocolUtils;
 import ru.spbau.mit.testserver.utils.TimeSocket;
 
-import java.util.stream.Collectors;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-public class TCPClient extends Client {
-    int connectionsNumber;
-    TCPClient(int elementNumber, int requestNumber, int connectionsNumber, long delay) {
+
+public class TCPClient extends Client{
+    private int connectionNumber;
+    public TCPClient(int elementNumber, int requestNumber, int connectionNumber, long delay) {
         super(elementNumber, requestNumber, delay);
-        this.connectionsNumber = connectionsNumber;
-        System.out.println("constructed");
+        this.connectionNumber = connectionNumber;
     }
 
     @Override
     public void start(String host, int port) {
-        System.out.println("started");
-        for (int j = 0; j < connectionsNumber; j++) {
-            try (TimeSocket socket = new TimeSocket(host, port)) {
-                System.out.println("connected");
-                for (int i = 0; i < requestNumber; i++) {
-                    byte[] bytes = ProtocolUtils.listToByte(random.ints(elementNumber).boxed().collect(Collectors.toList()));
-                    System.out.println("sended");
-                    System.out.println(bytes.length);
-                    socket.getOutputStream().write(bytes.length);
-                    socket.getOutputStream().write(bytes);
-                    System.out.println("readed");
-                    int count = socket.getInputStream().read();
-                    failed &= count == elementNumber;
-                    bytes = new byte[count];
-                    count = socket.getInputStream().read(bytes);
-                    System.out.println("closed");
+        for (int i = 0; i < connectionNumber; i++) {
+
+            try(Socket socket = new TimeSocket(host, port)) {
+
+                for (int j = 0; j < requestNumber; j++) {
+                    List<Integer> list = ProtocolUtils.randomList(elementNumber);
+
+                    socket.getOutputStream().write(ProtocolUtils.listToBytes(list));
+                    socket.getOutputStream().flush();
+
+                    list.sort(Comparator.naturalOrder());
+                    byte[] bytes = new byte[ProtocolUtils.MESSAGE_SIZE];
+
+                    socket.getInputStream().read(bytes);
+
+                    List ans = ProtocolUtils.bytesToList(bytes);
+                    assert (list.equals(ans));
+
                     Thread.sleep(delay);
                 }
-                socket.close();
-            } catch (Exception e) {
-                failed = true;
-                e.printStackTrace();
+            } catch (IOException | InterruptedException e) {
+                //fail
+                //go to next connection
             }
         }
-        System.out.println("ended");
     }
 }

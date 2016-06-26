@@ -6,18 +6,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TCPServer2 extends TCPServer {
-    private ExecutorService cacedThreadPool;
-    TCPServer2() throws IOException {
+    private ExecutorService cachedThreadPool;
+    public TCPServer2() throws IOException {
         super();
-        cacedThreadPool = Executors.newCachedThreadPool();
+        cachedThreadPool = Executors.newCachedThreadPool();
     }
-    void start() {
+    public void start() {
         while(!serverSocket.isClosed()) {
             try {
                 Socket socket = serverSocket.accept();
-                cacedThreadPool.execute(() -> whileHandle(socket));
+                cachedThreadPool.execute(() -> whileHandle(socket));
             } catch (IOException e) {
+                //fail
+                //wait for next client
             }
         }
+        cachedThreadPool.shutdown();
     }
 }

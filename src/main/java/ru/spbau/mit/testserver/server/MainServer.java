@@ -4,56 +4,75 @@ import ru.spbau.mit.testserver.utils.ArraySorter;
 import ru.spbau.mit.testserver.utils.ProtocolUtils;
 import ru.spbau.mit.testserver.utils.TimeCounter;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 import static ru.spbau.mit.testserver.utils.ProtocolUtils.*;
 
 public class MainServer {
     Socket socket;
     MainServer() throws IOException {
-        socket = new ServerSocket(12345).accept();
+        socket = new ServerSocket(ProtocolUtils.SERVER_PORT).accept();
     }
-    void run() throws IOException {
+    void run() {
         Server server = null;
         while (!socket.isClosed()) {
-            int cmd = socket.getInputStream().read();
-            switch(cmd) {
-                case EXIT:
-                    return;
-                case RUN_TCP_1:
-                    server = new TCPServer1();
-                    break;
-                case RUN_TCP_2:
-                    server = new TCPServer2();
-                    break;
-                case RUN_TCP_3:
-                    server = new TCPServer3();
-                    break;
-                case RUN_TCP_4:
-                    server = new TCPServer4();
-                    break;
-                case RUN_UDP_1:
-                    server = new UDPServer1();
-                    break;
-                case RUN_UDP_2:
-                    server = new UDPServer2();
-                    break;
+            try {
+                DataInputStream in = new DataInputStream(socket.getInputStream());
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                int cmd = in.readInt();
+                switch (cmd) {
+                    case EXIT:
+                        return;
+                    case RUN_TCP_1:
+                        server = new TCPServer1();
+                        break;
+                    case RUN_TCP_2:
+                        server = new TCPServer2();
+                        break;
+                    case RUN_TCP_3:
+                        server = new TCPServer3();
+                        break;
+                    case RUN_TCP_4:
+                        server = new TCPServer4();
+                        break;
+                    case RUN_UDP_1:
+                        server = new UDPServer1();
+                        break;
+                    case RUN_UDP_2:
+                        server = new UDPServer2();
+                        break;
+                }
+                TimeCounter.resetTime();
+                ArraySorter.resetTime();
+
+                out.writeInt(server.getPort());
+                new Thread(server::start).start();
+
+                int end = in.readInt();
+                assert (cmd == end);
+                try {
+                    Thread.sleep(ProtocolUtils.WAIT_CONNECTION_TIME);
+                } catch (InterruptedException e) {
+                    //oops
+                }
+                server.close();
+                try {
+                    Thread.sleep(ProtocolUtils.WAIT_CONNECTION_TIME);
+                } catch (InterruptedException e) {
+                    //oops
+                }
+
+                out.writeDouble(ProtocolUtils.averageFromList(TimeCounter.getTimes()));
+                out.writeDouble(ProtocolUtils.averageFromList(ArraySorter.getTimes()));
+
+            } catch (IOException e) {
+                //fail
+                continue;
             }
-            TimeCounter.resetTime();
-            ArraySorter.resetTime();
-            //socket.getOutputStream().write(server.getPort());
-            //socket.getOutputStream().flush();
-            final Server finalServer = server;
-            Thread thread = new Thread(() -> finalServer.start());
-            thread.setDaemon(true);
-            thread.start();
-            socket.getInputStream().read();
-            server.close();
-            new DataOutputStream(socket.getOutputStream()).writeDouble(ProtocolUtils.averageFromList(TimeCounter.getTimes()));
-            new DataOutputStream(socket.getOutputStream()).writeDouble(ProtocolUtils.averageFromList(ArraySorter.getTimes()));
-            socket.getOutputStream().flush();
         }
     }
     public static void main(String[] args) throws IOException {
