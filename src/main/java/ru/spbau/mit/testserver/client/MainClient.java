@@ -1,6 +1,5 @@
 package ru.spbau.mit.testserver.client;
 
-import ru.spbau.mit.testserver.server.*;
 import ru.spbau.mit.testserver.utils.ProtocolUtils;
 import ru.spbau.mit.testserver.utils.TimeCounter;
 
@@ -10,10 +9,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static ru.spbau.mit.testserver.utils.ProtocolUtils.*;
 
@@ -60,11 +55,12 @@ public class MainClient {
             return null;
         }
         try {
-            Thread.sleep(500);
+            Thread.sleep(ProtocolUtils.WAIT_CONNECTION_TIME);
         } catch (InterruptedException e) {
+            //oops
+            //continue
         }
-        System.out.print(port);
-        //ExecutorService threadPool = Executors.newFixedThreadPool(4);
+
         ArrayList<Thread> threads = new ArrayList<>();
         for (int i = 0; i < clientNumber; i++) {
             Thread thread = new Thread(() -> getClient(cmd, elementNumber, requestNumber, delay).start(ip, port));
@@ -74,18 +70,17 @@ public class MainClient {
 
         for (Thread thread : threads) {
             try {
-                thread.join();
+                thread.join(ProtocolUtils.MAX_TIME_WAIT);
             } catch (InterruptedException e) {
                 //fail
                 //witing for next thread
             }
         }
 
-        //System.out.println("awaited");
         try {
             out.writeInt(cmd);
         } catch (IOException e) {
-            e.printStackTrace();
+            //wrong info
             return null;
         }
         double[] res = new double[3];
@@ -94,7 +89,7 @@ public class MainClient {
             res[1] = in.readDouble();
             res[2] = in.readDouble();
         } catch (IOException e) {
-            e.printStackTrace();
+            //wrong info
             return null;
         }
         return res;

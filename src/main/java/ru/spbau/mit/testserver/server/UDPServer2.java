@@ -1,6 +1,7 @@
 package ru.spbau.mit.testserver.server;
 
 import ru.spbau.mit.testserver.utils.ProtocolUtils;
+import ru.spbau.mit.testserver.utils.TimeDatagramSocket;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -21,8 +22,10 @@ public class UDPServer2 extends UDPServer{
                 DatagramPacket packet = new DatagramPacket(message, message.length);
                 socket.receive(packet);
                 threadPool.execute(() -> handle(packet));
+                ((TimeDatagramSocket) socket).round();
             } catch (IOException e) {
-                //socket closed
+                //fail
+                //next client
             }
         }
         threadPool.shutdown();

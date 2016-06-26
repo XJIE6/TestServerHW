@@ -1,5 +1,8 @@
 package ru.spbau.mit.testserver.utils;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import ru.spbau.mit.testserver.Protocol;
+
 import java.lang.reflect.Array;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
@@ -22,6 +25,8 @@ public class ProtocolUtils {
     public static final int RUN_UDP_2 = 5;
     public static final int EXIT = 6;
     public static final int SERVER_PORT = 12345;
+    public static final int MAX_TIME_WAIT = 5000;
+    public static final int WAIT_CONNECTION_TIME = 500;
 
     public static List<Integer> randomList(int elementNumber) {
         Random random = new Random();
@@ -32,26 +37,30 @@ public class ProtocolUtils {
         return res;
     }
 
+    public static double averageFromList (List<Long> list) {
+        return list.stream().mapToLong(Long::longValue).filter(i -> i < MAX_TIME_WAIT).average().orElse(0);
+    }
 
-    public static byte[] listToBytes(List<Integer> list) {
-        ByteBuffer bb = ByteBuffer.allocate((list.size() + 1) * 4);
-        IntBuffer ib = bb.asIntBuffer();
-        ib.put(list.size());
-        list.forEach(ib::put);
+    public static byte[] listToBytes (List <Integer> list) {
+        byte[] message = Protocol.Array.newBuilder().addAllValue(list).build().toByteArray();
+        ByteBuffer bb = ByteBuffer.allocate(message.length + Integer.SIZE / Byte.SIZE);
+        bb.putInt(message.length);
+        bb.put(message);
         return bb.array();
     }
-
-    public static List<Integer> bytesToList(byte[] bytes) {
-        IntBuffer ib = ByteBuffer.wrap(bytes).asIntBuffer();
-        int size = ib.get();
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < size; ++i) {
-            list.add(ib.get());
+    public static List<Integer> bytesToList (byte[] bytes) throws InvalidProtocolBufferException {
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        int size = bb.getInt();
+        if (size <= 0) {
+            return new ArrayList<>();
         }
-        return list;
+        return bytesToListWithSize(bb, size);
     }
 
-    public static double averageFromList (List<Long> list) {
-        return list.stream().mapToLong(Long::longValue).average().orElse(0);
+    public static List<Integer> bytesToListWithSize (ByteBuffer bb, int size) throws InvalidProtocolBufferException {
+        byte[] message = new byte[size];
+        bb.get(message);
+        return new ArrayList<>(Protocol.Array.parseFrom(message).getValueList());
     }
+
 }

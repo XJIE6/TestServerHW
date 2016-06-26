@@ -1,17 +1,18 @@
 package ru.spbau.mit.testserver.client;
 
 import javax.swing.*;
-import java.awt.*;
-
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public final class ClientUI {
@@ -26,7 +27,7 @@ public final class ClientUI {
 
     private static JTable table;
 
-    private static MainClient client;
+    private static MainClient client = null;
 
     public static void main(String[] args) {
         buildClientUI();
@@ -124,9 +125,9 @@ public final class ClientUI {
             private final String[] parametersNames = new String[]{"Requests count:", "Clients count:", "Array length:", "Delay:"};
 
             public final Integer[][] parameters = new Integer[][]{
-                    {0, 1, 0, 0},
-                    {0, 2, 2, 0},
-                    {0, 100, 10000, 1000},
+                    {0, 10, 0, 0},
+                    {0, 5, 5, 0},
+                    {0, 100, 4000, 400},
                     {0, 5, 5, 0}
             };
 
@@ -227,9 +228,12 @@ public final class ClientUI {
         if (!checkTestParameters()) {
             return;
         }
-        try {
-            client = new MainClient(serverIP.getText());
-        } catch (IOException e1) {
+        if (client == null) {
+            try {
+                client = new MainClient(serverIP.getText());
+            } catch (IOException e1) {
+                return;
+            }
         }
 
         final Integer requestsCount = (Integer) table.getValueAt(0, 1);
@@ -239,39 +243,72 @@ public final class ClientUI {
             try {
                 file = new FileWriter("data.txt");
             } catch (IOException e1) {
-                System.out.println("NOOOOOOOO");
                 return;
             }
             graphic.clear();
-            //SwingUtilities.invokeLater(() -> buttonRun.setEnabled(false));
+            SwingUtilities.invokeLater(() -> buttonRun.setEnabled(false));
+            List<Integer> firstParam = new ArrayList<>();
+            List<Integer> secondParam = new ArrayList<>();
+            List<Integer> thirdParam = new ArrayList<>();
             for (int i = (Integer) table.getValueAt(1, 1); i <= (Integer) table.getValueAt(1, 2); i += Math.max((Integer) table.getValueAt(1, 3), 1)) {
                 for (int j = (Integer) table.getValueAt(2, 1); j <= (Integer) table.getValueAt(2, 2); j += Math.max((Integer) table.getValueAt(2, 3), 1)) {
                     for (int k = (Integer) table.getValueAt(3, 1); k <= (Integer) table.getValueAt(3, 2); k += Math.max((Integer) table.getValueAt(3, 3), 1)) {
                         double[] res = client.runServer(serversList.getSelectedIndex(), i, j, requestsCount, k);
-                        System.out.printf("%d, %d, %d\n", i, j, k);
-                        System.out.printf("%f, %f, %f\n", res[0], res[1], res[2]);
-                        try {
-                            file.write(Long.toString((long) res[0]));
-                            file.write(' ');
-                            file.write(Long.toString((long) res[1]));
-                            file.write(' ');
-                            file.write(Long.toString((long) res[2]));
-                            file.write('\n');
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
+                        firstParam.add((int)res[0]);
+                        secondParam.add((int)res[1]);
+                        thirdParam.add((int)res[2]);
                         graphic.addPoint(point, (long) res[0], (long) res[1], (long) res[2]);
                         point += 1;
                     }
                 }
             }
+            for (Integer i : firstParam) {
+                try {
+                    file.write(i);
+                    file.write('\n');
+                } catch (IOException e1) {
+                    //fail
+                    //continue
+                }
+            }
+            try {
+                file.write('\n');
+            } catch (IOException e1) {
+                //fail
+                //continue
+            }
+            for (Integer i : secondParam) {
+                try {
+                    file.write(i);
+                    file.write('\n');
+                } catch (IOException e1) {
+                    //fail
+                    //continue
+                }
+            }
+            try {
+                file.write('\n');
+            } catch (IOException e1) {
+                //fail
+                //continue
+            }
+            for (Integer i : thirdParam) {
+                try {
+                    file.write(i);
+                    file.write('\n');
+                } catch (IOException e1) {
+                    //fail
+                    //continue
+                }
+            }
             try {
                 file.close();
             } catch (IOException e1) {
-                e1.printStackTrace();
+                //fail
+                //continue
             }
             SwingUtilities.invokeLater(() -> {
-                //buttonRun.setEnabled(true);
+                buttonRun.setEnabled(true);
                 JOptionPane.showMessageDialog(frame, "Benchmark has finished!");
             });
         }).start();

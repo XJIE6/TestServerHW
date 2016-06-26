@@ -1,5 +1,6 @@
 package ru.spbau.mit.testserver.server;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import ru.spbau.mit.testserver.utils.ArraySorter;
 import ru.spbau.mit.testserver.utils.ProtocolUtils;
 import ru.spbau.mit.testserver.utils.TimeDatagramSocket;
@@ -25,12 +26,10 @@ public abstract class UDPServer extends Server{
     protected void handle(DatagramPacket packet) {
         try {
             byte[] bytes = ProtocolUtils.listToBytes(ArraySorter.sort(ProtocolUtils.bytesToList(packet.getData())));
-            DatagramPacket packet1 = new DatagramPacket(bytes, bytes.length, packet.getAddress(), packet.getPort());
-            socket.send(packet1);
-        } catch (Exception e) {
-            if (!socket.isClosed()) {
-                socket.close();
-            }
+            socket.send(new DatagramPacket(bytes, bytes.length, packet.getAddress(), packet.getPort()));
+        } catch (IOException e) {
+            //fail
+            //exit
         }
     }
 }

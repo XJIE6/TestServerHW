@@ -8,16 +8,11 @@ public class TCPServer1 extends TCPServer {
         super();
     }
     public void start() {
-
-        System.out.println("started");
-        System.out.print(serverSocket.isClosed());
         while (!serverSocket.isClosed()) {
             try {
                 Socket socket = serverSocket.accept();
-                System.out.println("accepted");
                 new Thread(() -> whileHandle(socket)).start();
             } catch (IOException e) {
-                e.printStackTrace();
                 //fail
                 //wait for next client
             }

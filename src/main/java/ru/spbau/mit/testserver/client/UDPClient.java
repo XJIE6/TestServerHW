@@ -35,7 +35,7 @@ public class UDPClient extends Client{
             socket.close();
         } catch (Exception e) {
             //fail
-            //end work
+            //exit
         }
     }
 }

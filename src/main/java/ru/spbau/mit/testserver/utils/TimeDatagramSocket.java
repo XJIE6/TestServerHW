@@ -8,10 +8,12 @@ import java.net.SocketException;
 public class TimeDatagramSocket extends DatagramSocket implements TimeCounter {
     private boolean started = false;
     private long startTime;
+    private long roundTime;
 
     private void start() {
         if (!started) {
             startTime = System.currentTimeMillis();
+            roundTime = startTime;
             started = true;
         }
     }
@@ -40,7 +42,17 @@ public class TimeDatagramSocket extends DatagramSocket implements TimeCounter {
 
     @Override
     public void close() {
-        times.add(System.currentTimeMillis() - startTime);
+        if (roundTime == startTime) {
+            times.add(System.currentTimeMillis() - startTime);
+        }
+        else {
+            times.add(roundTime - startTime);
+        }
         super.close();
     }
+
+    public void round() {
+        roundTime = System.currentTimeMillis();
+    }
+
 }
