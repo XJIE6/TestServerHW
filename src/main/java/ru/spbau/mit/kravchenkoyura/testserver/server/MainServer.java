@@ -1,16 +1,14 @@
-package ru.spbau.mit.testserver.server;
+package ru.spbau.mit.kravchenkoyura.testserver.server;
 
-import ru.spbau.mit.testserver.utils.ArraySorter;
-import ru.spbau.mit.testserver.utils.ProtocolUtils;
-import ru.spbau.mit.testserver.utils.TimeCounter;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.ArraySorter;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.ProtocolUtils;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.TimeCounter;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import static ru.spbau.mit.testserver.utils.ProtocolUtils.*;
 
 public class MainServer {
     Socket socket;
@@ -25,24 +23,24 @@ public class MainServer {
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 int cmd = in.readInt();
                 switch (cmd) {
-                    case EXIT:
+                    case ProtocolUtils.EXIT:
                         return;
-                    case RUN_TCP_1:
+                    case ProtocolUtils.RUN_TCP_1:
                         server = new TCPServer1();
                         break;
-                    case RUN_TCP_2:
+                    case ProtocolUtils.RUN_TCP_2:
                         server = new TCPServer2();
                         break;
-                    case RUN_TCP_3:
+                    case ProtocolUtils.RUN_TCP_3:
                         server = new TCPServer3();
                         break;
-                    case RUN_TCP_4:
+                    case ProtocolUtils.RUN_TCP_4:
                         server = new TCPServer4();
                         break;
-                    case RUN_UDP_1:
+                    case ProtocolUtils.RUN_UDP_1:
                         server = new UDPServer1();
                         break;
-                    case RUN_UDP_2:
+                    case ProtocolUtils.RUN_UDP_2:
                         server = new UDPServer2();
                         break;
                 }

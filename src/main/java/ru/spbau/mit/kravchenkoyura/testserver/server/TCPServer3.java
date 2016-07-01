@@ -1,9 +1,9 @@
-package ru.spbau.mit.testserver.server;
+package ru.spbau.mit.kravchenkoyura.testserver.server;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import ru.spbau.mit.testserver.utils.ArraySorter;
-import ru.spbau.mit.testserver.utils.ProtocolUtils;
-import ru.spbau.mit.testserver.utils.TimeCounter;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.ProtocolUtils;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.ArraySorter;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.TimeCounter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

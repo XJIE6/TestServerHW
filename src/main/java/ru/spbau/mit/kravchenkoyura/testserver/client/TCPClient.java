@@ -1,15 +1,11 @@
-package ru.spbau.mit.testserver.client;
+package ru.spbau.mit.kravchenkoyura.testserver.client;
 
 
-import ru.spbau.mit.testserver.utils.ProtocolUtils;
-import ru.spbau.mit.testserver.utils.TimeSocket;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.ProtocolUtils;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.TimeSocket;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 

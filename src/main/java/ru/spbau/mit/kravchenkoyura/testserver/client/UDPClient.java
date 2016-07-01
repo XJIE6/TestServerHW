@@ -1,11 +1,10 @@
-package ru.spbau.mit.testserver.client;
+package ru.spbau.mit.kravchenkoyura.testserver.client;
 
-import ru.spbau.mit.testserver.utils.ProtocolUtils;
-import ru.spbau.mit.testserver.utils.TimeDatagramSocket;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.ProtocolUtils;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.TimeDatagramSocket;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;

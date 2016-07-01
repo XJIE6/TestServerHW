@@ -1,4 +1,4 @@
-package ru.spbau.mit.testserver.server;
+package ru.spbau.mit.kravchenkoyura.testserver.server;
 
 import java.io.IOException;
 import java.net.Socket;

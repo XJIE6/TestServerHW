@@ -1,7 +1,7 @@
-package ru.spbau.mit.testserver.client;
+package ru.spbau.mit.kravchenkoyura.testserver.client;
 
-import ru.spbau.mit.testserver.utils.ProtocolUtils;
-import ru.spbau.mit.testserver.utils.TimeCounter;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.ProtocolUtils;
+import ru.spbau.mit.kravchenkoyura.testserver.utils.TimeCounter;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -10,25 +10,23 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import static ru.spbau.mit.testserver.utils.ProtocolUtils.*;
-
 public class MainClient {
 
     private Socket socket;
     private String ip;
     private static Client getClient(int cmd, int elementNumber, int requestNumber, long delay) {
         switch(cmd) {
-            case RUN_TCP_1:
+            case ProtocolUtils.RUN_TCP_1:
                 return new TCPClient(elementNumber, requestNumber, 1, delay);
-            case RUN_TCP_2:
+            case ProtocolUtils.RUN_TCP_2:
                 return new TCPClient(elementNumber, requestNumber, 1, delay);
-            case RUN_TCP_3:
+            case ProtocolUtils.RUN_TCP_3:
                 return new TCPClient(elementNumber, requestNumber, 1, delay);
-            case RUN_TCP_4:
+            case ProtocolUtils.RUN_TCP_4:
                 return new TCPClient(elementNumber, 1, requestNumber, delay);
-            case RUN_UDP_1:
+            case ProtocolUtils.RUN_UDP_1:
                 return new UDPClient(elementNumber, requestNumber, delay);
-            case RUN_UDP_2:
+            case ProtocolUtils.RUN_UDP_2:
                 return new UDPClient(elementNumber, requestNumber, delay);
             default:
                 return null;

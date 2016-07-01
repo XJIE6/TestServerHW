@@ -1,4 +1,4 @@
-package ru.spbau.mit.testserver.utils;
+package ru.spbau.mit.kravchenkoyura.testserver.utils;
 
 import java.util.*;
 

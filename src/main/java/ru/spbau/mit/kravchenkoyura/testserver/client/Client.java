@@ -1,4 +1,4 @@
-package ru.spbau.mit.testserver.client;
+package ru.spbau.mit.kravchenkoyura.testserver.client;
 
 import java.util.Random;
 
