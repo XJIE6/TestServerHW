@@ -3,10 +3,13 @@ package ru.spbau.mit.kravchenkoyura.testserver.utils;
 import java.io.IOException;
 import java.net.Socket;
 
+//Обычный Socket, который считает время между открытием и закрытием соединения
+//Используется в TCP серверах и клиентах
+
 public class TimeSocket extends Socket implements TimeCounter {
     private long startTime;
 
-    TimeSocket() {
+    public TimeSocket() {
         super();
         startTime = System.currentTimeMillis();
     }

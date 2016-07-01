@@ -1,12 +1,11 @@
 package ru.spbau.mit.kravchenkoyura.testserver.client;
 
-import java.util.Random;
+//Абстрактный класс для всех клиентов
 
 public abstract class Client {
     protected int elementNumber, requestNumber;
     protected long delay;
-    protected Random random = new Random();
-    Client(int elementNumber, int requestNumber, long delay) {
+    public Client(int elementNumber, int requestNumber, long delay) {
         this.elementNumber = elementNumber;
         this.requestNumber = requestNumber;
         this.delay = delay;

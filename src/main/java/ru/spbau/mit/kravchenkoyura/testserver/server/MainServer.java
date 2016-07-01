@@ -10,12 +10,16 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+//Это главный сервер
+//Запускает/останавливает нужные сервера
+
+
 public class MainServer {
-    Socket socket;
-    MainServer() throws IOException {
+    private Socket socket;
+    public MainServer() throws IOException {
         socket = new ServerSocket(ProtocolUtils.SERVER_PORT).accept();
     }
-    void run() {
+    public void run() {
         Server server = null;
         while (!socket.isClosed()) {
             try {

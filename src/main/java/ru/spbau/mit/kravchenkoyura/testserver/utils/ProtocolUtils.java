@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+//Работа с protobuf, константы и другие вспомогательные функции
 
 public class ProtocolUtils {
     public static final int MESSAGE_SIZE = 1 << 21;

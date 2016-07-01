@@ -2,7 +2,9 @@ package ru.spbau.mit.kravchenkoyura.testserver.server;
 
 import java.io.IOException;
 
-public abstract class Server {
+//Интерфейс для всех серверов
+
+public interface Server {
     public abstract void start();
     public abstract int getPort();
     public abstract void close() throws IOException;

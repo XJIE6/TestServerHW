@@ -5,6 +5,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+//Обычный DatagramSocket, который считает время от первого пакета до последнего
+//Используется в UDP серверах и клиентах
+
 public class TimeDatagramSocket extends DatagramSocket implements TimeCounter {
     private boolean started = false;
     private long startTime;

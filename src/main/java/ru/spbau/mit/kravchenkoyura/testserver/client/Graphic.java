@@ -12,13 +12,14 @@ import java.util.List;
 
 public class Graphic extends JPanel {
     private static final int TIME_COUNT = 4;
+    private static final int CHART_SIZE = 400;
     private XChartPanel<XYChart> graphic;
 
     private List<Integer>[] times;
     private String[] names = {"client time", "request time", "sortTime"};
 
     public Graphic() {
-        graphic = new XChartPanel<>(new XYChart(400, 400, Styler.ChartTheme.GGPlot2));
+        graphic = new XChartPanel<>(new XYChart(CHART_SIZE, CHART_SIZE, Styler.ChartTheme.GGPlot2));
         times = new LinkedList[TIME_COUNT];
         for (int i = 0; i < TIME_COUNT; i++) {
             times[i] = new LinkedList<>();

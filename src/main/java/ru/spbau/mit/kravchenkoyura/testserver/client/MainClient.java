@@ -10,6 +10,10 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
+//Главный клиент
+//Общается с главным сервером
+//Получает команды от UI
+
 public class MainClient {
 
     private Socket socket;
@@ -33,13 +37,13 @@ public class MainClient {
         }
     }
 
-    MainClient(String ip) throws IOException {
+    public MainClient(String ip) throws IOException {
         socket = new Socket();
         this.ip = ip;
         socket.connect(new InetSocketAddress(ip, ProtocolUtils.SERVER_PORT));
     }
 
-    double[] runServer(int cmd, int clientNumber, int elementNumber, int requestNumber, long delay) {
+    public double[] runServer(int cmd, int clientNumber, int elementNumber, int requestNumber, long delay) {
         TimeCounter.resetTime();
         DataInputStream in;
         DataOutputStream out;

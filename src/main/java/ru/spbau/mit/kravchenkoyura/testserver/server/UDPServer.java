@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-public abstract class UDPServer extends Server{
+//Арактный класс для всех UDP
+//Имеет встроенную функцию обработки одного пакета
+
+public abstract class UDPServer implements Server {
     protected DatagramSocket socket;
     protected byte[] message;
     UDPServer() throws IOException {
@@ -21,6 +24,7 @@ public abstract class UDPServer extends Server{
     public int getPort() {
         return socket.getLocalPort();
     }
+
     protected void handle(DatagramPacket packet) {
         try {
             byte[] bytes = ProtocolUtils.listToBytes(ArraySorter.sort(ProtocolUtils.bytesToList(packet.getData())));

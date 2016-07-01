@@ -2,8 +2,10 @@ package ru.spbau.mit.kravchenkoyura.testserver.utils;
 
 import java.util.*;
 
+//Сортирует массивы за квадрат и зачекает время
+
 public class ArraySorter {
-    static List<Long> times = Collections.synchronizedList(new LinkedList<>());
+    private static List<Long> times = Collections.synchronizedList(new LinkedList<>());
     public static List<Long> getTimes() {
         return times;
     }

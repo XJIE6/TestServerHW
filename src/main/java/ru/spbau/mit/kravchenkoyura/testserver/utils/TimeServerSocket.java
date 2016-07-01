@@ -5,6 +5,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+//Обычный ServerSocket, который аозвращает TimeSocket на accept
+//Используется в TCP серверах и клиентах
+
 public class TimeServerSocket extends ServerSocket{
     public TimeServerSocket(int port) throws IOException {
         super(port);

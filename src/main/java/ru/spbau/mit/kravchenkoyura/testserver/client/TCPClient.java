@@ -1,6 +1,5 @@
 package ru.spbau.mit.kravchenkoyura.testserver.client;
 
-
 import ru.spbau.mit.kravchenkoyura.testserver.utils.ProtocolUtils;
 import ru.spbau.mit.kravchenkoyura.testserver.utils.TimeSocket;
 
@@ -9,6 +8,9 @@ import java.net.Socket;
 import java.util.Comparator;
 import java.util.List;
 
+//TCP клиент
+//Делает TCP запросы
+//Запускается главным клиентом
 
 public class TCPClient extends Client{
     private int connectionNumber;

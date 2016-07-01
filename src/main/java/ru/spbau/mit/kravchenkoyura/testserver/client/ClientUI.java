@@ -17,6 +17,10 @@ import java.util.Locale;
 
 public final class ClientUI {
     private final static String[] SERVERS_LIST = {"TCP1", "TCP2", "TCP3", "TCP4", "UDP1", "UDP2"};
+    private final static int HEIGHT = 1250;
+    private final static int WEIGHT = 600;
+    private final static int SETTINGS_PANEL_HEIGHT = 450;
+    private final static int GRAPHIC_PANEL_HEIGHT = 800;
 
     private static JFrame frame;
 
@@ -36,7 +40,7 @@ public final class ClientUI {
     private static void buildClientUI() {
         frame = new JFrame("Benchmark client");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(1250, 600);
+        frame.setSize(HEIGHT, WEIGHT);
         frame.setResizable(false);
         frame.setLayout(new BorderLayout());
         frame.add(buildSettingsPanel(), BorderLayout.WEST);
@@ -111,7 +115,7 @@ public final class ClientUI {
 
     private static JPanel buildSettingsPanel() {
         final JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(450, frame.getHeight()));
+        panel.setPreferredSize(new Dimension(SETTINGS_PANEL_HEIGHT, frame.getHeight()));
         panel.setLayout(new BorderLayout());
         panel.add(buildToolbar(), BorderLayout.NORTH);
         table = buildSettingGrid();
@@ -120,6 +124,8 @@ public final class ClientUI {
     }
 
     private static JTable buildSettingGrid() {
+        final int MIN_WIGHT = 130;
+        final int ROW_HEIGHT = 20;
         final JTable table = new JTable(new AbstractTableModel() {
             private final String[] columnNames = new String[]{"Parameter", "From", "To", "Step"};
             private final String[] parametersNames = new String[]{"Requests count:", "Clients count:", "Array length:", "Delay:"};
@@ -186,8 +192,8 @@ public final class ClientUI {
 
         table.setColumnSelectionAllowed(false);
         table.setRowSelectionAllowed(false);
-        table.getColumnModel().getColumn(0).setMinWidth(130);
-        table.setRowHeight(20);
+        table.getColumnModel().getColumn(0).setMinWidth(MIN_WIGHT);
+        table.setRowHeight(ROW_HEIGHT);
         table.setFont(font);
 
         table.getColumnModel().getColumn(1).setCellRenderer(new EditTextRender());
@@ -200,7 +206,7 @@ public final class ClientUI {
 
     private static JPanel buildGraphicPanel() {
         graphic = new Graphic();
-        graphic.setPreferredSize(new Dimension(800, frame.getHeight()));
+        graphic.setPreferredSize(new Dimension(GRAPHIC_PANEL_HEIGHT, frame.getHeight()));
         return graphic;
     }
 
@@ -239,12 +245,6 @@ public final class ClientUI {
         final Integer requestsCount = (Integer) table.getValueAt(0, 1);
         new Thread(() -> {
             int point = 0;
-            FileWriter file = null;
-            try {
-                file = new FileWriter("data.txt");
-            } catch (IOException e1) {
-                return;
-            }
             graphic.clear();
             SwingUtilities.invokeLater(() -> buttonRun.setEnabled(false));
             List<Integer> firstParam = new ArrayList<>();
@@ -262,50 +262,27 @@ public final class ClientUI {
                     }
                 }
             }
-            for (Integer i : firstParam) {
-                try {
+            try (FileWriter file = new FileWriter("data.txt")) {
+                for (Integer i : firstParam) {
                     file.write(i);
                     file.write('\n');
-                } catch (IOException e1) {
-                    //fail
-                    //continue
                 }
-            }
-            try {
                 file.write('\n');
-            } catch (IOException e1) {
-                //fail
-                //continue
-            }
-            for (Integer i : secondParam) {
-                try {
+                for (Integer i : secondParam) {
                     file.write(i);
                     file.write('\n');
-                } catch (IOException e1) {
-                    //fail
-                    //continue
                 }
-            }
-            try {
                 file.write('\n');
-            } catch (IOException e1) {
-                //fail
-                //continue
-            }
-            for (Integer i : thirdParam) {
-                try {
+                for (Integer i : thirdParam) {
                     file.write(i);
                     file.write('\n');
-                } catch (IOException e1) {
-                    //fail
-                    //continue
                 }
-            }
-            try {
-                file.close();
             } catch (IOException e1) {
-                //fail
-                //continue
+                //data writing failed
+                SwingUtilities.invokeLater(() -> {
+                    buttonRun.setEnabled(true);
+                    JOptionPane.showMessageDialog(frame, "Error in result writing");
+                });
             }
             SwingUtilities.invokeLater(() -> {
                 buttonRun.setEnabled(true);

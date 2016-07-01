@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class TCPServer3 extends Server {
+public class TCPServer3 implements Server {
     private final static int THREADS_COUNT = 4;
     private final static int PORT = 11111;
 

@@ -1,6 +1,5 @@
 package ru.spbau.mit.kravchenkoyura.testserver.server;
 
-
 import ru.spbau.mit.kravchenkoyura.testserver.utils.ArraySorter;
 import ru.spbau.mit.kravchenkoyura.testserver.utils.ProtocolUtils;
 import ru.spbau.mit.kravchenkoyura.testserver.utils.TimeServerSocket;
@@ -9,9 +8,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public abstract class TCPServer extends Server{
+//Арактный класс для всех TCP серверов (кроме NIO)
+//Имеет встроенную функцию обработки одного соединения
+
+public abstract class TCPServer implements Server {
     protected ServerSocket serverSocket;
-    TCPServer() throws IOException {
+    public TCPServer() throws IOException {
         serverSocket = new TimeServerSocket(0);
     }
     public int getPort() {
@@ -20,11 +22,13 @@ public abstract class TCPServer extends Server{
     public void close() throws IOException {
         serverSocket.close();
     }
+
     protected void whileHandle(Socket socket) {
         while (!socket.isClosed()) {
             handle(socket);
         }
     }
+
     protected void handle(Socket socket) {
 
         try {
