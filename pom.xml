@@ -19,25 +19,21 @@
                 <version>3.5</version>
             </plugin>
             <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
-                <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.5.0</version>
-                <configuration>
-                    <!--
-                      The version of protoc must match protobuf-java. If you don't depend on
-                      protobuf-java directly, you will be transitively depending on the
-                      protobuf-java version that grpc depends on.
-                    -->
-                    <protocArtifact>com.google.protobuf:protoc:3.0.0-beta-2:exe:${os.detected.classifier}</protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:0.13.2:exe:${os.detected.classifier}</pluginArtifact>
-                </configuration>
+                <groupId>com.github.os72</groupId>
+                <artifactId>protoc-jar-maven-plugin</artifactId>
+                <version>3.0.0-b2.1</version>
                 <executions>
                     <execution>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
+                            <goal>run</goal>
                         </goals>
+                        <configuration>
+                            <protocVersion>3.0.0</protocVersion>
+                            <inputDirectories>
+                                <inputDirectory>src/main/proto</inputDirectory>
+                            </inputDirectories>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -47,7 +43,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>2.6.1</version>
+            <version>3.0.0-beta-2</version>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchart</groupId>
