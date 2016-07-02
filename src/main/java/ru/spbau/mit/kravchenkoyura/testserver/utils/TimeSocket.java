@@ -8,6 +8,7 @@ import java.net.Socket;
 
 public class TimeSocket extends Socket implements TimeCounter {
     private long startTime;
+    private boolean failed = false;
 
     public TimeSocket() {
         super();
@@ -18,9 +19,15 @@ public class TimeSocket extends Socket implements TimeCounter {
         startTime = System.currentTimeMillis();
     }
 
+    public void fail() {
+        failed = true;
+    }
+
     @Override
     public void close() throws IOException {
-        times.add(System.currentTimeMillis() - startTime);
+        if (!failed) {
+            times.add(System.currentTimeMillis() - startTime);
+        }
         super.close();
     }
 }

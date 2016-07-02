@@ -19,6 +19,8 @@ public class UDPServer1 extends UDPServer{
                 new Thread(() -> handle(packet)).start();
                 ((TimeDatagramSocket) socket).round();
             } catch (IOException e) {
+                ((TimeDatagramSocket) socket).fail();
+                ((TimeDatagramSocket) socket).close();
                 //fail
                 //next client
             }

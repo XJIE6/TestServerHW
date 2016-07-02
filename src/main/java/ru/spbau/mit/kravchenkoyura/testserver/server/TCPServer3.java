@@ -85,6 +85,7 @@ public class TCPServer3 implements Server {
                                 client.get = ByteBuffer.allocate(client.length);
                             }
                         } catch (IOException e) {
+                            client.fail();
                             continue;
                         }
                     }
@@ -97,14 +98,16 @@ public class TCPServer3 implements Server {
                                 client.size.clear();
                             }
                         } catch (IOException e) {
+                            client.fail();
                             continue;
                         }
                     }
                 }
                 if (selectionKey.isWritable()) {
+                    Info client = null;
                     try {
                         final SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
-                        final Info client = (Info) selectionKey.attachment();
+                        client = (Info) selectionKey.attachment();
                         if (client.put != null) {
                             socketChannel.write(client.put);
                             if (!client.put.hasRemaining()) {
@@ -112,6 +115,7 @@ public class TCPServer3 implements Server {
                             }
                         }
                     } catch (IOException e) {
+                        client.fail();
                         continue;
                     }
                 }
@@ -131,6 +135,7 @@ public class TCPServer3 implements Server {
             info.readed = false;
             info.end();
         } catch (InvalidProtocolBufferException e) {
+            info.fail();
             //fail
             //continue
         }
@@ -139,18 +144,27 @@ public class TCPServer3 implements Server {
     private static class Info implements TimeCounter {
         private int length = 0;
         private boolean readed = false;
+        private boolean failed = false;
         private ByteBuffer size = ByteBuffer.allocate(4);
         private ByteBuffer get = null;
         private ByteBuffer put = null;
 
         private long startTime;
 
+        private void fail() {
+            failed = true;
+        }
+
+
         private void start() {
+            failed = false;
             startTime = System.currentTimeMillis();
         }
 
         private void end() {
-            times.add(System.currentTimeMillis() - startTime);
+            if (!failed) {
+                times.add(System.currentTimeMillis() - startTime);
+            }
             start();
         }
 

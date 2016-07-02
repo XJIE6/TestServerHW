@@ -30,6 +30,8 @@ public abstract class UDPServer implements Server {
             byte[] bytes = ProtocolUtils.listToBytes(ArraySorter.sort(ProtocolUtils.bytesToList(packet.getData())));
             socket.send(new DatagramPacket(bytes, bytes.length, packet.getAddress(), packet.getPort()));
         } catch (IOException e) {
+            ((TimeDatagramSocket) socket).fail();
+            ((TimeDatagramSocket) socket).close();
             //fail
             //exit
         }

@@ -22,8 +22,9 @@ public class TCPClient extends Client{
     @Override
     public void start(String host, int port) {
         for (int i = 0; i < connectionNumber; i++) {
-
-            try(Socket socket = new TimeSocket(host, port)) {
+            Socket socket = null;
+            try {
+                socket = new TimeSocket(host, port);
 
                 for (int j = 0; j < requestNumber; j++) {
                     List<Integer> list = ProtocolUtils.randomList(elementNumber);
@@ -41,7 +42,18 @@ public class TCPClient extends Client{
 
                     Thread.sleep(delay);
                 }
+
+                socket.close();
             } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+                ((TimeSocket) socket).fail();
+                if (!socket.isClosed()) {
+                    try {
+                        socket.close();
+                    } catch (IOException e1) {
+                        //checked closing
+                    }
+                }
                 //fail
                 //go to next connection
             }

@@ -12,6 +12,11 @@ public class TimeDatagramSocket extends DatagramSocket implements TimeCounter {
     private boolean started = false;
     private long startTime;
     private long roundTime;
+    private boolean failed = false;
+
+    public void fail() {
+        failed = true;
+    }
 
     private void start() {
         if (!started) {
@@ -45,11 +50,12 @@ public class TimeDatagramSocket extends DatagramSocket implements TimeCounter {
 
     @Override
     public void close() {
-        if (roundTime == startTime) {
-            times.add(System.currentTimeMillis() - startTime);
-        }
-        else {
-            times.add(roundTime - startTime);
+        if (!failed) {
+            if (roundTime == startTime) {
+                times.add(System.currentTimeMillis() - startTime);
+            } else {
+                times.add(roundTime - startTime);
+            }
         }
         super.close();
     }

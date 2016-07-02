@@ -264,17 +264,17 @@ public final class ClientUI {
             }
             try (FileWriter file = new FileWriter("data.txt")) {
                 for (Integer i : firstParam) {
-                    file.write(i);
+                    file.write(i.toString());
                     file.write('\n');
                 }
                 file.write('\n');
                 for (Integer i : secondParam) {
-                    file.write(i);
+                    file.write(i.toString());
                     file.write('\n');
                 }
                 file.write('\n');
                 for (Integer i : thirdParam) {
-                    file.write(i);
+                    file.write(i.toString());
                     file.write('\n');
                 }
             } catch (IOException e1) {

@@ -4,6 +4,7 @@ import ru.spbau.mit.kravchenkoyura.testserver.utils.ProtocolUtils;
 import ru.spbau.mit.kravchenkoyura.testserver.utils.TimeDatagramSocket;
 
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Comparator;
 import java.util.List;
@@ -21,7 +22,9 @@ public class UDPClient extends Client{
 
     @Override
     public void start(String host, int port) {
-        try (TimeDatagramSocket socket = new TimeDatagramSocket()){
+        DatagramSocket socket = null;
+        try {
+            socket = new TimeDatagramSocket();
 
             for (int i = 0; i < requestNumber; i++) {
                 List<Integer> list = ProtocolUtils.randomList(elementNumber);
@@ -41,7 +44,11 @@ public class UDPClient extends Client{
                 Thread.sleep(delay);
             }
 
+            socket.close();
+
         } catch (Exception e) {
+            ((TimeDatagramSocket) socket).fail();
+            socket.close();
             //fail
             //exit
         }
